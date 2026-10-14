@@ -67,7 +67,7 @@ export const layers: {
     osi: "L7",
     protocol: "HTTP/1.1 200 OK",
     callout:
-      "Next.js apps, a WebGL company site, and a Rust crawler that audits SEO at scale.",
+      "Client sites and web apps in Next.js, and a Rust crawler that audits SEO at scale.",
     fields: [["Content-Type", "text/html; charset=utf-8"]],
   },
 ];
@@ -90,7 +90,8 @@ export type Project = {
   info: string;
   description: string;
   stack: string[];
-  repo: string;
+  // Client work usually has no public repo, so either link may be missing.
+  repo?: string;
   live?: string;
 };
 
@@ -98,6 +99,29 @@ const gh = (repo: string) => `https://github.com/harunsahinol/${repo}`;
 
 // Newest first, like a capture you scroll back through.
 export const projects: Project[] = [
+  {
+    slug: "dsan",
+    name: "DSAN App",
+    year: 2026,
+    language: "TypeScript",
+    layer: "http",
+    info: "In-house super app for a 500-person industrial company: mobile app and admin panel",
+    description:
+      "An internal app for a heavy-industry company with more than 500 employees, built as an Expo mobile app for iOS and Android and a Next.js admin panel on one shared backend. Staff can sign in only after HR approves them, then report near misses for occupational safety and follow news, the catering menu, surveys, videos and the company magazine. It runs entirely on the company's own servers with Docker Compose, so staff data never leaves them.",
+    stack: ["Expo", "React Native", "Next.js", "Hono", "PostgreSQL", "Prisma", "Docker"],
+  },
+  {
+    slug: "ifix",
+    name: "iFix Coastal",
+    year: 2026,
+    language: "TypeScript",
+    layer: "http",
+    info: "Bilingual site for a phone repair shop, with a phone you can take apart in 3D",
+    description:
+      "Website for iFix, a phone and tablet repair shop inside Coastal Grand Mall in Myrtle Beach, South Carolina. Every page is in English and Spanish, and a three.js repair stage lets visitors pick a repair or keep scrolling to take the phone apart. Built with Next.js 16 as a static export and served from Cloudflare Workers.",
+    stack: ["Next.js", "three.js", "next-intl", "Cloudflare Workers"],
+    live: "https://www.ifixcoastal.com",
+  },
   {
     slug: "sentinet",
     name: "Sentinet",
@@ -121,6 +145,18 @@ export const projects: Project[] = [
       "Checks HTTP endpoints, TCP ports, disk, memory and load, Docker containers and PostgreSQL replication lag on production and staging servers. Results go to Uptime Kuma as heartbeats and problems go to Telegram. Built against musl, so it needs no libc, OpenSSL, docker CLI or psql on the host.",
     stack: ["Rust", "musl", "Uptime Kuma", "Telegram", "PostgreSQL"],
     repo: gh("cli-monitoring"),
+  },
+  {
+    slug: "iz-merdiven",
+    name: "İz Merdiven",
+    year: 2026,
+    language: "TypeScript",
+    layer: "http",
+    info: "Site for a staircase maker in Antalya, with a project gallery and quote requests",
+    description:
+      "Turkish-language website for İz Merdiven, a staircase manufacturer in Konyaaltı, Antalya. It presents their spiral, floating-step and wooden staircases and glass railings, shows completed projects across Antalya, and lets visitors ask for a quote.",
+    stack: ["Next.js", "TypeScript"],
+    live: "https://www.izmerdiven.com",
   },
   {
     slug: "connect-bilisim",

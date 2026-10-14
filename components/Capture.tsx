@@ -116,12 +116,15 @@ export default function Capture() {
                         <li>Layer: {layerNames[p.layer]}</li>
                         <li>Language: {p.language}</li>
                         <li>Built with: {p.stack.join(", ")}</li>
-                        <li>
-                          Source:{" "}
-                          <a href={p.repo} target="_blank" rel="noreferrer">
-                            {p.repo.replace("https://", "")}
-                          </a>
-                        </li>
+                        {p.repo ? (
+                          <li>
+                            Source:{" "}
+                            <a href={p.repo} target="_blank" rel="noreferrer">
+                              {p.repo.replace("https://", "")}
+                            </a>
+                          </li>
+                        ) : null}
+                        {!p.repo && !p.live ? <li>Source: private</li> : null}
                         {p.live ? (
                           <li>
                             Live:{" "}

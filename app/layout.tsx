@@ -20,7 +20,7 @@ const fragmentMono = Fragment_Mono({
 export const metadata: Metadata = {
   title: "Harun Şahinol",
   description:
-    "Developer in Turkey building network tools, Rust services and web apps.",
+    "Developer in Turkey building web and mobile apps, from the interface down to the servers.",
 };
 
 export const viewport: Viewport = {

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { layerNames, layers, profile } from "@/data";
-import { filterProjects } from "./filterEvents";
 
 // Resting pose of the axonometric view, in degrees.
 const REST_RX = 58;
@@ -240,8 +239,8 @@ export default function PacketHero() {
 
       <div className="hero-intro">
         <p>
-          Developer in {profile.location}. I build tools that read networks
-          and watch servers, and the web apps that sit on top of them.
+          Developer in {profile.location}. I build web and mobile apps for
+          companies, from the interface down to the servers they run on.
         </p>
         <div className="hero-actions">
           <a className="button button--solid" href="#projects">
@@ -253,7 +252,7 @@ export default function PacketHero() {
         </div>
       </div>
 
-      <ol className="hero-callouts" aria-label="What I work on, by network layer">
+      <ol className="hero-callouts" aria-label="My projects, layer by layer">
         {[...layers].reverse().map((layer) => {
           const i = layers.indexOf(layer);
           return (
@@ -269,7 +268,6 @@ export default function PacketHero() {
                 onPointerLeave={() => setActive(null)}
                 onFocus={() => setActive(i)}
                 onBlur={() => setActive(null)}
-                onClick={() => filterProjects(layer.id)}
               >
                 <span className="callout-layer">
                   <span className="callout-osi">{layer.osi}</span>{" "}

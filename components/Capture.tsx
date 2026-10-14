@@ -1,28 +1,14 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
-import { layerNames, projects, type LayerId } from "@/data";
-import { FILTER_EVENT } from "./filterEvents";
+import { Fragment, useState } from "react";
+import { osiOf, projects, type LayerId } from "@/data";
 
-type Filter = LayerId | "all";
-
-const filterOrder: LayerId[] = ["eth", "ip", "tcp", "tls", "http", "vision"];
+// "L2–L7": from the deepest layer a project reaches up to the interface.
+const layerSpan = (deepest: LayerId) =>
+  deepest === "http" ? "L7" : `${osiOf[deepest]}–L7`;
 
 export default function Capture() {
-  const [filter, setFilter] = useState<Filter>("all");
-  const [open, setOpen] = useState<string | null>(null);
-
-  useEffect(() => {
-    const onFilter = (e: Event) => {
-      setFilter((e as CustomEvent<Filter>).detail);
-      setOpen(null);
-    };
-    window.addEventListener(FILTER_EVENT, onFilter);
-    return () => window.removeEventListener(FILTER_EVENT, onFilter);
-  }, []);
-
-  const shown =
-    filter === "all" ? projects : projects.filter((p) => p.layer === filter);
+  const [open, setOpen] = useState<string | null>(projects[0]?.slug ?? null);
 
   return (
     <section id="projects" className="section capture" aria-labelledby="projects-title">
@@ -31,63 +17,35 @@ export default function Capture() {
           Projects
         </h2>
         <p className="lede">
-          Newest first. Each row is colored by the network layer it works at,
-          using Wireshark&rsquo;s default coloring rules. Open a row for the
-          details.
+          Each row is colored by the lowest layer of the stack the project
+          reaches, using Wireshark&rsquo;s default coloring rules. Open a row
+          for the details.
         </p>
-      </div>
-
-      <div className="filters" role="group" aria-label="Show projects by layer">
-        <button
-          type="button"
-          className="filter"
-          aria-pressed={filter === "all"}
-          onClick={() => setFilter("all")}
-        >
-          All <span className="filter-count">{projects.length}</span>
-        </button>
-        {filterOrder.map((id) => (
-          <button
-            key={id}
-            type="button"
-            className="filter"
-            style={{ "--c": `var(--layer-${id})` } as React.CSSProperties}
-            aria-pressed={filter === id}
-            onClick={() => setFilter(filter === id ? "all" : id)}
-          >
-            <span className="filter-swatch" aria-hidden="true" />
-            {layerNames[id]}{" "}
-            <span className="filter-count">
-              {projects.filter((p) => p.layer === id).length}
-            </span>
-          </button>
-        ))}
       </div>
 
       <table className="capture-table">
         <thead>
           <tr>
             <th scope="col" className="col-year">Year</th>
-            <th scope="col" className="col-lang">Language</th>
-            <th scope="col" className="col-layer">Layer</th>
             <th scope="col" className="col-name">Project</th>
+            <th scope="col" className="col-platform">Platform</th>
+            <th scope="col" className="col-layers">Layers</th>
             <th scope="col" className="col-info">Info</th>
           </tr>
         </thead>
         <tbody>
-          {shown.map((p) => {
+          {projects.map((p) => {
             const isOpen = open === p.slug;
             const detailId = `detail-${p.slug}`;
+            const color = { "--c": `var(--layer-${p.deepest})` } as React.CSSProperties;
             return (
               <Fragment key={p.slug}>
                 <tr
                   className={`capture-row${isOpen ? " is-open" : ""}`}
-                  style={{ "--c": `var(--layer-${p.layer})` } as React.CSSProperties}
+                  style={color}
                   onClick={() => setOpen(isOpen ? null : p.slug)}
                 >
                   <td className="col-year">{p.year}</td>
-                  <td className="col-lang">{p.language}</td>
-                  <td className="col-layer">{layerNames[p.layer]}</td>
                   <th scope="row" className="col-name">
                     <button
                       type="button"
@@ -101,30 +59,18 @@ export default function Capture() {
                       {p.name}
                     </button>
                   </th>
+                  <td className="col-platform">{p.platform}</td>
+                  <td className="col-layers">{layerSpan(p.deepest)}</td>
                   <td className="col-info">{p.info}</td>
                 </tr>
-                <tr
-                  id={detailId}
-                  className="capture-detail"
-                  hidden={!isOpen}
-                  style={{ "--c": `var(--layer-${p.layer})` } as React.CSSProperties}
-                >
+                <tr id={detailId} className="capture-detail" hidden={!isOpen} style={color}>
                   <td colSpan={5}>
                     <div className="detail-grid">
                       <ul className="detail-tree">
                         <li>{p.name}</li>
-                        <li>Layer: {layerNames[p.layer]}</li>
-                        <li>Language: {p.language}</li>
+                        <li>Platform: {p.platform}</li>
+                        <li>Layers: {layerSpan(p.deepest)}</li>
                         <li>Built with: {p.stack.join(", ")}</li>
-                        {p.repo ? (
-                          <li>
-                            Source:{" "}
-                            <a href={p.repo} target="_blank" rel="noreferrer">
-                              {p.repo.replace("https://", "")}
-                            </a>
-                          </li>
-                        ) : null}
-                        {!p.repo && !p.live ? <li>Source: private</li> : null}
                         {p.live ? (
                           <li>
                             Live:{" "}
@@ -132,7 +78,9 @@ export default function Capture() {
                               {p.live.replace("https://", "")}
                             </a>
                           </li>
-                        ) : null}
+                        ) : (
+                          <li>Access: internal to the company</li>
+                        )}
                       </ul>
                       <p className="detail-text">{p.description}</p>
                     </div>
